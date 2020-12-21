@@ -1,8 +1,21 @@
-import torch
 import numpy as np
-import sys
+import torch
 
 MAX_FLOAT = 1e30
+
+
+def normalize(x, verbose=False):
+    # B x D
+    x_norm2 = torch.norm(x, p=2, dim=1, keepdim=True)
+    x_normalized = x.float() / x_norm2
+
+    if verbose:
+        print(f"Normalizing tensor with shape {x.shape} ...")
+
+        print(x.shape)
+        print(torch.min(x_normalized), torch.max(x_normalized))
+
+    return x_normalized
 
 
 def sample_data(data, num_sample=None, replace=False, weights=None):
