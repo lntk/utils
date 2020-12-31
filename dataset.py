@@ -533,7 +533,7 @@ def infinite_data_loader(data, batch_size, train=True, data_dir="./data", get_la
                 yield images
 
 
-def get_data_loader(data, batch_size, train=True, data_dir="./data"):
+def get_data_loader(data, batch_size, train=True, data_dir="./data", data_transform=None):
     if data == "mnist":
         return MNIST_loader(batch_size=batch_size, train=train, data_dir=data_dir)
     elif data == "mnist64":
@@ -558,6 +558,8 @@ def get_data_loader(data, batch_size, train=True, data_dir="./data"):
         return WordVec_loader(language="fr", batch_size=batch_size, train=train, data_dir=data_dir)
     elif data == "cifar_gray":
         return CIFAR_GRAY_loader(batch_size=batch_size, train=train, data_dir=data_dir)
+    elif data == "cifar":
+        return CIFAR_loader(batch_size=batch_size, train=train, data_dir=data_dir, data_transform=data_transform)
     else:
         raise NotImplementedError
 
@@ -704,6 +706,29 @@ def CIFAR_GRAY_loader(batch_size, train, size=32, data_dir="./data"):
                           transforms.Resize(size),
                           transforms.ToTensor(),
                       ]))
+
+    data_loader = DataLoader(dataset=dataset,
+                             batch_size=batch_size,
+                             drop_last=True,
+                             shuffle=shuffle)
+
+    return data_loader
+
+
+def CIFAR_loader(batch_size, train, size=32, data_dir="./data", data_transform=None):
+    shuffle = train
+
+    if data_transform is None:
+        data_transform = transforms.Compose([
+            transforms.Resize(size),
+            transforms.ToTensor(),
+        ])
+
+
+    dataset = CIFAR10(data_dir,
+                      train=train,
+                      download=True,
+                      transform=data_transform)
 
     data_loader = DataLoader(dataset=dataset,
                              batch_size=batch_size,

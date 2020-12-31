@@ -19,6 +19,10 @@ def set_seed(seed):
     torch.backends.cudnn.deterministic = True
 
 
+def subtract_list(l1, l2):    
+    return list(set(l1) - set(l2))
+
+
 def inf_to_zero(x):
     x[x == np.inf] = 0
     return x
