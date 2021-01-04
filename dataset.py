@@ -533,7 +533,7 @@ def infinite_data_loader(data, batch_size, train=True, data_dir="./data", get_la
                 yield images
 
 
-def get_data_loader(data, batch_size, train=True, data_dir="./data", data_transform=None):
+def get_data_loader(data, batch_size, train=True, data_dir="./data", data_transform=None, return_dataset=False):
     if data == "mnist":
         return MNIST_loader(batch_size=batch_size, train=train, data_dir=data_dir)
     elif data == "mnist64":
@@ -559,12 +559,12 @@ def get_data_loader(data, batch_size, train=True, data_dir="./data", data_transf
     elif data == "cifar_gray":
         return CIFAR_GRAY_loader(batch_size=batch_size, train=train, data_dir=data_dir)
     elif data == "cifar":
-        return CIFAR_loader(batch_size=batch_size, train=train, data_dir=data_dir, data_transform=data_transform)
+        return CIFAR_loader(batch_size=batch_size, train=train, data_dir=data_dir, data_transform=data_transform, return_dataset=return_dataset)
     else:
         raise NotImplementedError
 
 
-def MNIST_loader(batch_size, train, size=32, data_dir="./data"):
+def MNIST_loader(batch_size, train, size=32, data_dir="./data", return_dataset=False):
     shuffle = train
 
     dataset = MNIST(data_dir,
@@ -575,6 +575,9 @@ def MNIST_loader(batch_size, train, size=32, data_dir="./data"):
                         transforms.ToTensor(),
                         # transforms.Normalize([0.5], [0.5]),
                     ]))
+
+    if return_dataset:
+        return dataset
 
     data_loader = DataLoader(dataset=dataset,
                              batch_size=batch_size,
@@ -650,7 +653,7 @@ def SVHN_loader(batch_size, train, size=32, data_dir="./data"):
     if train:
         split = "train"
     else:
-        split = "test"
+        split = "tests"
 
     dataset = SVHN(data_dir,
                    split=split,
@@ -675,7 +678,7 @@ def SVHN_GRAY_loader(batch_size, train, size=32, data_dir="./data"):
     if train:
         split = "train"
     else:
-        split = "test"
+        split = "tests"
 
     dataset = SVHN(data_dir,
                    split=split,
@@ -715,7 +718,7 @@ def CIFAR_GRAY_loader(batch_size, train, size=32, data_dir="./data"):
     return data_loader
 
 
-def CIFAR_loader(batch_size, train, size=32, data_dir="./data", data_transform=None):
+def CIFAR_loader(batch_size, train, size=32, data_dir="./data", data_transform=None, return_dataset=False):
     shuffle = train
 
     if data_transform is None:
@@ -724,11 +727,13 @@ def CIFAR_loader(batch_size, train, size=32, data_dir="./data", data_transform=N
             transforms.ToTensor(),
         ])
 
-
     dataset = CIFAR10(data_dir,
                       train=train,
                       download=True,
                       transform=data_transform)
+
+    if return_dataset:
+        return dataset
 
     data_loader = DataLoader(dataset=dataset,
                              batch_size=batch_size,
@@ -839,7 +844,7 @@ def triplet_loader(data, batch_size, train, size=32, data_dir="./data"):
         if train:
             split = "train"
         else:
-            split = "test"
+            split = "tests"
 
         svhn_dataset = SVHN(data_dir,
                             split=split,
