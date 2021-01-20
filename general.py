@@ -14,12 +14,13 @@ import numpy as np
 def set_seed(seed):
     torch.manual_seed(seed)
     np.random.seed(seed)
+    random.seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.enabled = False
     torch.backends.cudnn.deterministic = True
 
 
-def subtract_list(l1, l2):    
+def subtract_list(l1, l2):
     return list(set(l1) - set(l2))
 
 
@@ -34,7 +35,7 @@ def print_minimax(x):
     elif isinstance(x, torch.Tensor):
         return f"Min: {torch.min(x)}, Max: {torch.max(x)}"
     else:
-        raise NotImplementedError        
+        raise NotImplementedError
 
 
 def print_model_parameters(model):
@@ -118,12 +119,12 @@ def create_directory(directory):
     return directory
 
 
-def write_list(l, file_name):
+def write_json(l, file_name):
     with open(file_name, 'w') as file_handle:
         json.dump(l, file_handle)
 
 
-def read_list(file_name):
+def read_json(file_name):
     with open(file_name, 'r') as file_handle:
         l = json.load(file_handle)
         return l
@@ -152,6 +153,14 @@ def get_all_paths(directory, keep_dir=False):
         paths = [f"{directory}/{d}" for d in os.listdir(directory)]
     else:
         paths = [d for d in os.listdir(directory)]
+    return paths
+
+
+def get_all_dirs(directory, keep_dir=False):
+    if keep_dir:
+        paths = [f"{directory}/{d}" for d in os.listdir(directory) if os.path.isdir(f"{directory}/{d}")]
+    else:
+        paths = [d for d in os.listdir(directory) if os.path.isdir(f"{directory}/{d}")]
     return paths
 
 
